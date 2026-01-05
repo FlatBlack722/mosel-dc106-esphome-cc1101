@@ -6,6 +6,9 @@ It provides basic window control:
 - Open / Close / Stop
 - A position slider using **time-based estimation** (`time_based` cover)
 
+<img width="1053" height="954" alt="image" src="https://github.com/user-attachments/assets/16b3f423-dd78-4a67-8a27-520ba6a54be1" />
+<img width="624" height="873" alt="image" src="https://github.com/user-attachments/assets/1c419880-fcb4-49ce-a958-95bf3d980a5c" />
+
 ---
 
 ## Remote Used (Confirmed)
@@ -16,6 +19,10 @@ Remote details (from the label):
 - **Type:** Nine-channel transmitter
 - **Printed band:** **433.05–434.79 MHz**
 - **Supply:** 3VDC
+
+![20251231_175150 (Large)](https://github.com/user-attachments/assets/8f2dd780-cf24-4206-9aa0-7beed5217451)
+![20251231_175155 (Large)](https://github.com/user-attachments/assets/90079eb9-6498-4445-b929-9d37ee3718e2)
+
 
 Even though the remote is branded MOSEL, the RF frames decode successfully using ESPHome’s built-in **Dooya** protocol decoder/transmitter:
 - `remote_receiver: dump: dooya`
