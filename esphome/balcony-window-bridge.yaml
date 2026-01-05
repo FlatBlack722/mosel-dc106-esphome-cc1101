@@ -1,0 +1,206 @@
+esphome:
+  name: balcony-window-bridge
+  friendly_name: "Balcony window bridge"
+  on_boot:
+    priority: -10
+    then:
+      - delay: 200ms
+      - cc1101.begin_rx
+
+esp32:
+  board: seeed_xiao_esp32c6
+  variant: esp32c6
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+logger:
+  level: INFO
+
+api:
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+
+spi:
+  clk_pin: D8
+  mosi_pin: D10
+  miso_pin: D9
+
+cc1101:
+  cs_pin: D3
+  frequency: 433.92MHz
+  modulation_type: ASK/OOK
+
+remote_transmitter:
+  pin: D1
+  carrier_duty_percent: 100%
+  on_transmit:
+    then:
+      - cc1101.set_idle
+      - cc1101.begin_tx
+      - delay: 2ms
+  on_complete:
+    then:
+      - cc1101.begin_rx
+
+remote_receiver:
+  pin: D2
+  dump:
+    - dooya
+
+substitutions:
+  dooya_id: "0x00FF3421"
+  ch_small_right: "33"
+  ch_small_left: "34"
+  ch_large: "35"
+
+  # timing calibration
+  open_time: "40s"
+  close_time: "40s"
+
+  # RF repeat tuning
+  tx_repeats: "8"
+  tx_wait: "15ms"
+
+script:
+  # Direction-based naming:
+  # dooya_up   = button 1 (checks 1 + 14)
+  # dooya_down = button 3 (checks 3 + 12)
+  # dooya_stop = button 5 (check 5)
+
+  - id: dooya_up
+    parameters:
+      ch: int
+    mode: restart
+    then:
+      - remote_transmitter.transmit_dooya:
+          id: ${dooya_id}
+          channel: !lambda "return (uint8_t) ch;"
+          button: 1
+          check: 1
+          repeat:
+            times: ${tx_repeats}
+            wait_time: ${tx_wait}
+      - delay: 80ms
+      - remote_transmitter.transmit_dooya:
+          id: ${dooya_id}
+          channel: !lambda "return (uint8_t) ch;"
+          button: 1
+          check: 14
+          repeat:
+            times: ${tx_repeats}
+            wait_time: ${tx_wait}
+
+  - id: dooya_down
+    parameters:
+      ch: int
+    mode: restart
+    then:
+      - remote_transmitter.transmit_dooya:
+          id: ${dooya_id}
+          channel: !lambda "return (uint8_t) ch;"
+          button: 3
+          check: 3
+          repeat:
+            times: ${tx_repeats}
+            wait_time: ${tx_wait}
+      - delay: 80ms
+      - remote_transmitter.transmit_dooya:
+          id: ${dooya_id}
+          channel: !lambda "return (uint8_t) ch;"
+          button: 3
+          check: 12
+          repeat:
+            times: ${tx_repeats}
+            wait_time: ${tx_wait}
+
+  - id: dooya_stop
+    parameters:
+      ch: int
+    mode: restart
+    then:
+      - remote_transmitter.transmit_dooya:
+          id: ${dooya_id}
+          channel: !lambda "return (uint8_t) ch;"
+          button: 5
+          check: 5
+          repeat:
+            times: ${tx_repeats}
+            wait_time: ${tx_wait}
+
+cover:
+  # NOTE: Inverted semantics by design (until HA supports reversing):
+  # - Slider will effectively behave: 0% = open, 100% = closed
+  # - Buttons in HA will feel inverted (accepted)
+
+  - platform: time_based
+    name: "Balcony window small right (Inverted %)"
+    device_class: window
+    assumed_state: true
+    has_built_in_endstop: true
+
+    # keep the "inverted %" behavior consistent even if times differ
+    open_duration: ${close_time}
+    close_duration: ${open_time}
+
+    open_action:
+      - script.execute:
+          id: dooya_down
+          ch: ${ch_small_right}
+    close_action:
+      - script.execute:
+          id: dooya_up
+          ch: ${ch_small_right}
+    stop_action:
+      - script.execute:
+          id: dooya_stop
+          ch: ${ch_small_right}
+
+  - platform: time_based
+    name: "Balcony window small left (Inverted %)"
+    device_class: window
+    assumed_state: true
+    has_built_in_endstop: true
+
+    open_duration: ${close_time}
+    close_duration: ${open_time}
+
+    open_action:
+      - script.execute:
+          id: dooya_down
+          ch: ${ch_small_left}
+    close_action:
+      - script.execute:
+          id: dooya_up
+          ch: ${ch_small_left}
+    stop_action:
+      - script.execute:
+          id: dooya_stop
+          ch: ${ch_small_left}
+
+  - platform: time_based
+    name: "Balcony window large (Inverted %)"
+    device_class: window
+    assumed_state: true
+    has_built_in_endstop: true
+
+    open_duration: ${close_time}
+    close_duration: ${open_time}
+
+    open_action:
+      - script.execute:
+          id: dooya_down
+          ch: ${ch_large}
+    close_action:
+      - script.execute:
+          id: dooya_up
+          ch: ${ch_large}
+    stop_action:
+      - script.execute:
+          id: dooya_stop
+          ch: ${ch_large}
