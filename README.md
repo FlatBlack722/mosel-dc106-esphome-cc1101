@@ -175,14 +175,6 @@ esphome/balcony-window-bridge.yaml
 
 Wi-Fi credentials are intentionally **not stored** in this repository.
 
-Use:
-
-~~~
-esphome/secrets.yaml.example
-~~~
-
-Copy it to:
-
 ~~~
 esphome/secrets.yaml
 ~~~
