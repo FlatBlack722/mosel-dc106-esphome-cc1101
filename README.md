@@ -11,7 +11,7 @@ It provides basic window control:
 
 ---
 
-## Remote Used (Confirmed)
+## Remote Used
 
 Remote details (from the label):
 - **Brand:** MOSEL
@@ -20,8 +20,10 @@ Remote details (from the label):
 - **Printed band:** **433.05–434.79 MHz**
 - **Supply:** 3VDC
 
-![20251231_175150 (Large)](https://github.com/user-attachments/assets/8f2dd780-cf24-4206-9aa0-7beed5217451)
-![20251231_175155 (Large)](https://github.com/user-attachments/assets/90079eb9-6498-4445-b929-9d37ee3718e2)
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/8f2dd780-cf24-4206-9aa0-7beed5217451" width="320" alt="MOSEL DC106 label - image 1" />
+  <img src="https://github.com/user-attachments/assets/90079eb9-6498-4445-b929-9d37ee3718e2" width="320" alt="MOSEL DC106 label - image 2" />
+</p>
 
 
 Even though the remote is branded MOSEL, the RF frames decode successfully using ESPHome’s built-in **Dooya** protocol decoder/transmitter:
@@ -78,6 +80,21 @@ This uses the XIAO “Dx” pin labels as used in ESPHome:
 > This setup assumes:
 > - **GDO0 = TX**
 > - **GDO2 = RX**
+
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/78b73eb9-387a-4074-bc76-71a103300cf9" width="420" alt="20260102_100552" />
+</p>
+
+
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/44d9df1a-8623-4439-a15e-98c6bb44c4c0" width="320" alt="Image 1" />
+  <img src="https://github.com/user-attachments/assets/fb0437a0-8268-42ba-b0b9-d2c9f0c2ec8f" width="320" alt="Image 2" />
+</p>
+
+
+
+I used this model to print the case for the two boards:
+https://www.printables.com/model/1421038-remixedespsomfy-rts-case-for-esp32c3-mini-and-c110
 
 ---
 
